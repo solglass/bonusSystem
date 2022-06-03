@@ -28,3 +28,24 @@ contract BonusTokens {
         return numberOfTokensSpent;
     }
 }
+
+contract BonusTokensPremium is BonusTokens
+{      
+        function calculateNumberOfTokensAccrued(uint256 numberOfTokensAccrued, uint256 numberOfTokensToAdd) public override pure returns (uint) 
+    {
+        uint256 PremiumMultiplier = 2;
+        numberOfTokensAccrued = numberOfTokensAccrued + numberOfTokensToAdd * PremiumMultiplier;
+        return numberOfTokensAccrued;
+    }
+}
+
+contract BonusTokensVip is BonusTokens
+{
+      
+        function calculateNumberOfTokensAccrued(uint256 numberOfTokensAccrued, uint256 numberOfTokensToAdd) public override pure returns (uint) 
+    {
+        uint256 PremiumMultiplier = 5;
+        numberOfTokensAccrued = numberOfTokensAccrued + numberOfTokensToAdd * PremiumMultiplier;
+        return numberOfTokensAccrued;
+    }    
+}
