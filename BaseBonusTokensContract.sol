@@ -1,51 +1,56 @@
-
 //SPDX-License-Identifier: MIT
 
 pragma solidity 0.8.14;
 
 contract BonusTokens {
 
-    function currentBalance(address clientWallet_) public pure virtual
-        returns(address, uint256) 
-        
-    {
-         uint256 accrued = calculateNumberOfTokensAccrued(0, 100);
-         uint256 spent = calculateNumberOfTokensSpent(0, 50);
-         uint256 clientBalance = accrued - spent;
-        return (clientWallet_, clientBalance);
-    }
+    mapping (address => uint256) public _numberOfTokensAccrued;
+    mapping (address => uint256) public _numberOfTokensSpent;
+    uint internal Multiplier;
     
-    
-    function calculateNumberOfTokensAccrued(uint256 numberOfTokensAccrued, uint256 numberOfTokensToAdd) public virtual pure returns (uint) 
+    constructor() 
     {
-        numberOfTokensAccrued = numberOfTokensAccrued + numberOfTokensToAdd;
-        return numberOfTokensAccrued;
+        Multiplier = 1;
     }
 
-   function calculateNumberOfTokensSpent(uint256 numberOfTokensSpent, uint256 numberOfTokensToSpend) public virtual pure returns (uint)  
+    function currentBalance(address clientWallet) public  virtual
+        returns (uint256)
+        
     {
-        numberOfTokensSpent = numberOfTokensSpent - numberOfTokensToSpend;
-        return numberOfTokensSpent;
+         uint256 clientBalance = _numberOfTokensAccrued[clientWallet] - _numberOfTokensAccrued[clientWallet];
+         return clientBalance;
+    }
+    
+    
+    function calculateNumberOfTokensAccrued(address clientWallet, uint256 numberOfTokensToAdd) public virtual  returns (uint256) 
+    {
+        _numberOfTokensAccrued[clientWallet] = _numberOfTokensAccrued[clientWallet] + numberOfTokensToAdd * Multiplier;
+        return _numberOfTokensAccrued[clientWallet];
+    }
+
+   function calculateNumberOfTokensSpent(address clientWallet, uint256 numberOfTokensToSpend) public virtual  returns (uint)  
+    {
+        _numberOfTokensSpent[clientWallet] = _numberOfTokensSpent[clientWallet] - numberOfTokensToSpend * Multiplier;
+          if (_numberOfTokensAccrued[clientWallet] < _numberOfTokensSpent[clientWallet])
+         {
+             _numberOfTokensSpent[clientWallet] = _numberOfTokensAccrued[clientWallet];
+         }
+        return _numberOfTokensSpent[clientWallet];
     }
 }
 
 contract BonusTokensPremium is BonusTokens
-{      
-        function calculateNumberOfTokensAccrued(uint256 numberOfTokensAccrued, uint256 numberOfTokensToAdd) public override pure returns (uint) 
+{
+   constructor() 
     {
-        uint256 PremiumMultiplier = 2;
-        numberOfTokensAccrued = numberOfTokensAccrued + numberOfTokensToAdd * PremiumMultiplier;
-        return numberOfTokensAccrued;
+        Multiplier = 2;
     }
 }
 
 contract BonusTokensVip is BonusTokens
 {
-      
-        function calculateNumberOfTokensAccrued(uint256 numberOfTokensAccrued, uint256 numberOfTokensToAdd) public override pure returns (uint) 
+    constructor() 
     {
-        uint256 PremiumMultiplier = 5;
-        numberOfTokensAccrued = numberOfTokensAccrued + numberOfTokensToAdd * PremiumMultiplier;
-        return numberOfTokensAccrued;
-    }    
+        Multiplier = 5;
+    }   
 }
