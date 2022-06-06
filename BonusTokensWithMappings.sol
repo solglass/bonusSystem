@@ -24,14 +24,18 @@ contract BonusTokens {
     
     function calculateNumberOfTokensAccrued(address clientWallet, uint256 numberOfTokensToAdd) public virtual  returns (uint256) 
     {
-        _numberOfTokensAccrued[clientWallet] = _numberOfTokensAccrued[clientWallet] + numberOfTokensToAdd;
+        _numberOfTokensAccrued[clientWallet] = _numberOfTokensAccrued[clientWallet] + numberOfTokensToAdd * Multiplier;
         return _numberOfTokensAccrued[clientWallet];
     }
 
-   function calculateNumberOfTokensSpent(address clientWallet,  uint256 numberOfTokensSpent, uint256 numberOfTokensToSpend) public virtual  returns (uint)  
+   function calculateNumberOfTokensSpent(address clientWallet, uint256 numberOfTokensToSpend) public virtual  returns (uint)  
     {
-        _numberOfTokensSpent[clientWallet] = _numberOfTokensSpent[clientWallet] - numberOfTokensToSpend;
-        return numberOfTokensSpent;
+        _numberOfTokensSpent[clientWallet] = _numberOfTokensSpent[clientWallet] - numberOfTokensToSpend * Multiplier;
+          if (_numberOfTokensSpent[clientWallet] < 0)
+         {
+             _numberOfTokensSpent[clientWallet] = 0;
+         }
+        return _numberOfTokensSpent[clientWallet];
     }
 }
 
